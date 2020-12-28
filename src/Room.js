@@ -27,13 +27,6 @@ const Room = (props) => {
   const [messages, setMessages] = useState([]);
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
-
-  useMemo(() => {
-    if (lastMessage) {
-      handleNewMessage(JSON.parse(lastMessage.data));
-    }
-  }, [lastMessage, handleNewMessage]);
-
   function handleNewMessage(data) {
     switch (data.action) {
       case "vote":
@@ -50,6 +43,13 @@ const Room = (props) => {
         console.error("Unintended action captured");
     }
   }
+
+  useMemo(() => {
+    if (lastMessage) {
+      handleNewMessage(JSON.parse(lastMessage.data));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lastMessage]);
 
   function handleVote(data) {
     setMessages((messages) => {
