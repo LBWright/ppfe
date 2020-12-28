@@ -22,7 +22,7 @@ const Room = (props) => {
   const [hidden, setHidden] = useState(true);
 
   const [socketUrl] = useState(
-    `ws://ppbe.herokuapp.com/ws/${props.match.params.room}`
+    `wss://ppbe.herokuapp.com/ws/${props.match.params.room}`
   );
   const [messages, setMessages] = useState([]);
 
