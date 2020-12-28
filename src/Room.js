@@ -32,7 +32,7 @@ const Room = (props) => {
     if (lastMessage) {
       handleNewMessage(JSON.parse(lastMessage.data));
     }
-  }, [lastMessage]);
+  }, [lastMessage, handleNewMessage]);
 
   function handleNewMessage(data) {
     switch (data.action) {
