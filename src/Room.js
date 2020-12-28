@@ -6,7 +6,7 @@ import { withRouter } from "react-router-dom";
 const Room = (props) => {
   //Public API that will echo messages sent to it back to the client
   const [socketUrl] = useState(
-    `ws://localhost:8082/ws/${props.match.params.room}`
+    `ws://ppbe.herokuapp.com/ws/${props.match.params.room}`
   );
   const messageHistory = useRef([]);
 
