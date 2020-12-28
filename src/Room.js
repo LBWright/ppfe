@@ -4,7 +4,6 @@ import useWebSocket, { ReadyState } from "react-use-websocket";
 import { withRouter } from "react-router-dom";
 
 const Room = (props) => {
-  //Public API that will echo messages sent to it back to the client
   const [socketUrl] = useState(
     `ws://ppbe.herokuapp.com/ws/${props.match.params.room}`
   );
@@ -17,7 +16,9 @@ const Room = (props) => {
     [lastMessage]
   );
 
-  const handleClickSendMessage = useCallback(() => sendMessage("Hello"), []);
+  const handleClickSendMessage = useCallback(() => sendMessage("Hello"), [
+    sendMessage,
+  ]);
 
   const connectionStatus = {
     [ReadyState.CONNECTING]: "Connecting",
