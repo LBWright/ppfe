@@ -3,7 +3,6 @@ import { useCallback, useState, useMemo } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { withRouter } from "react-router-dom";
 import "./App.css";
-import { get } from "jquery";
 
 const buttons = [
   { label: "1", value: "1", action: "vote" },
@@ -112,8 +111,8 @@ const Room = (props) => {
     if (hidden && msg.points) return "Vote Cast"
     if (hidden) return "Deliberating..."
     return msg.points;
-
   }
+
 
   return (
     <div>
@@ -160,7 +159,7 @@ const Room = (props) => {
                   <span className="h3">
                     {message.user}:{" "}
                   </span>
-                  <span className="h4 text-muted">
+                  <span className='h4 text-muted'>
                     {getMsg(message)}
                   </span>
                 </p>
