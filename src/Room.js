@@ -3,6 +3,7 @@ import { useCallback, useState, useMemo } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { withRouter } from "react-router-dom";
 import "./App.css";
+import { get } from "jquery";
 
 const buttons = [
   { label: "1", value: "1", action: "vote" },
@@ -13,12 +14,12 @@ const buttons = [
   { label: "13", value: "13", action: "vote" },
   { label: "21", value: "21", action: "vote" },
   { label: "?", value: "?", action: "vote" },
-  { label: "Show", value: "show", action: "reveal" },
-  { label: "Reset", value: "reset", action: "reset" },
+  { label: "Show", value: "show", action: "reveal", class: "btn-primary" },
+  { label: "Reset", value: "reset", action: "reset", class: "btn-danger" },
 ];
 
 const Room = (props) => {
-  const [user, setUser] = useState(() => localStorage.getItem("user") || "");
+  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user") || ""));
   const [hidden, setHidden] = useState(true);
 
   const [socketUrl] = useState(
@@ -78,6 +79,14 @@ const Room = (props) => {
     setHidden(true);
   }
 
+  const handleSubmitUser = useCallback(
+    () => {
+      sendMessage(JSON.stringify({ payload: "", user, action: "vote" }))
+      localStorage.setItem("user", JSON.stringify(user))
+    },
+    [sendMessage, user]
+  )
+
   const handleClickSendMessage = useCallback(
     (button) => {
       if (!user) {
@@ -99,29 +108,47 @@ const Room = (props) => {
     [ReadyState.UNINSTANTIATED]: "Uninstantiated",
   }[readyState];
 
+  const getMsg = (msg) => {
+    if (hidden && msg.points) return "Vote Cast"
+    if (hidden) return "Deliberating..."
+    return msg.points;
+
+  }
+
   return (
     <div>
-      <h2>Connection status: {connectionStatus}</h2>
+      <p>Connection status: {connectionStatus}</p>
       <h2>Current user: {user}</h2>
-      <form>
+      <form className="form-group" onSubmit={e => {
+        e.preventDefault()
+        handleSubmitUser()
+      }}>
         <label>
-          Username:{" "}
-          <input value={user} onChange={(e) => setUser(e.target.value)} />
+          <input className="form-control" placeholder="@username" value={user} onChange={(e) => setUser(e.target.value)} />
         </label>
+        <input type="submit" className="btn btn-primary" value="Submit" />
       </form>
-      {buttons.map((button) => {
-        return (
-          <button
-            id={button.value}
-            key={button.value}
-            value={button.value}
-            onClick={(e) => handleClickSendMessage(button)}
-          >
-            {button.label}
-          </button>
-        );
-      })}
-      <div>
+      <div className="container">
+        <div className="row justify-content-start">
+          {buttons.map((button) => {
+            return (
+              <div className="col-sm-1">
+                <button
+                  id={button.value}
+                  key={button.value}
+                  value={button.value}
+                  className={`btn ${button.class || ""}`}
+                  onClick={(e) => handleClickSendMessage(button)}
+                >
+                  {button.label}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="row m-t-5">
         <ul>
           {messages
             .map((message, idx) => {
@@ -130,9 +157,11 @@ const Room = (props) => {
               }
               return (
                 <p key={idx}>
-                  {message.user}:{" "}
-                  <span className={hidden ? "hidden" : ""}>
-                    {message.points}
+                  <span className="h3">
+                    {message.user}:{" "}
+                  </span>
+                  <span className="h4 text-muted">
+                    {getMsg(message)}
                   </span>
                 </p>
               );

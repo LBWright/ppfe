@@ -1,4 +1,4 @@
-.hidden {
-  color: transparent;
-  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+.hide {
+  color: transparent !important;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5) !important;
 }

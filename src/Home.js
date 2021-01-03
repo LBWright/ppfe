@@ -13,12 +13,12 @@ export default withRouter(function Home(props) {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <label>
+      <form className="form-group" onSubmit={handleSubmit}>
+        <label htmlFor="new-room">
           <h2>Create a new Pointing Room</h2>
-          <input type="text" value={room} onChange={handleChange} />
+          <input className="form-control" id="new-room" type="text" value={room} onChange={handleChange} />
         </label>
-        <input type="submit" value="Submit" />
+        <input className="btn btn-primary" type="submit" value="Submit" />
       </form>
     </div>
   );
