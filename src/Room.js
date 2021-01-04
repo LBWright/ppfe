@@ -18,7 +18,11 @@ const buttons = [
 ];
 
 const Room = (props) => {
-  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user") || ""));
+  const [user, setUser] = useState(() => {
+    if (localStorage.getItem("user"))
+      return JSON.parse(localStorage.getItem("user"));
+    return "";
+  });
   const [hidden, setHidden] = useState(true);
 
   const [socketUrl] = useState(
@@ -78,13 +82,10 @@ const Room = (props) => {
     setHidden(true);
   }
 
-  const handleSubmitUser = useCallback(
-    () => {
-      sendMessage(JSON.stringify({ payload: "", user, action: "vote" }))
-      localStorage.setItem("user", JSON.stringify(user))
-    },
-    [sendMessage, user]
-  )
+  const handleSubmitUser = useCallback(() => {
+    sendMessage(JSON.stringify({ payload: "", user, action: "vote" }));
+    localStorage.setItem("user", JSON.stringify(user));
+  }, [sendMessage, user]);
 
   const handleClickSendMessage = useCallback(
     (button) => {
@@ -108,22 +109,29 @@ const Room = (props) => {
   }[readyState];
 
   const getMsg = (msg) => {
-    if (hidden && msg.points) return "Vote Cast"
-    if (hidden) return "Deliberating..."
+    if (hidden && msg.points) return "Vote Cast";
+    if (hidden) return "Deliberating...";
     return msg.points;
-  }
-
+  };
 
   return (
     <div>
       <p>Connection status: {connectionStatus}</p>
       <h2>Current user: {user}</h2>
-      <form className="form-group" onSubmit={e => {
-        e.preventDefault()
-        handleSubmitUser()
-      }}>
+      <form
+        className="form-group"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmitUser();
+        }}
+      >
         <label>
-          <input className="form-control" placeholder="@username" value={user} onChange={(e) => setUser(e.target.value)} />
+          <input
+            className="form-control"
+            placeholder="@username"
+            value={user}
+            onChange={(e) => setUser(e.target.value)}
+          />
         </label>
         <input type="submit" className="btn btn-primary" value="Submit" />
       </form>
@@ -131,10 +139,9 @@ const Room = (props) => {
         <div className="row justify-content-start">
           {buttons.map((button) => {
             return (
-              <div className="col-sm-1">
+              <div key={button.value} className="col-sm-1">
                 <button
                   id={button.value}
-                  key={button.value}
                   value={button.value}
                   className={`btn ${button.class || ""}`}
                   onClick={(e) => handleClickSendMessage(button)}
@@ -156,12 +163,8 @@ const Room = (props) => {
               }
               return (
                 <p key={idx}>
-                  <span className="h3">
-                    {message.user}:{" "}
-                  </span>
-                  <span className='h4 text-muted'>
-                    {getMsg(message)}
-                  </span>
+                  <span className="h3">{message.user}: </span>
+                  <span className="h4 text-muted">{getMsg(message)}</span>
                 </p>
               );
             })
